@@ -23,6 +23,8 @@ export default new Vuex.Store({
 		entranceCarMax: '',
 		noticeCount: '',
 		SmsCount: '',
+		accessList: [],
+		accessCarList: [],
 	},
 	mutations: mutations,
 	actions: actions,

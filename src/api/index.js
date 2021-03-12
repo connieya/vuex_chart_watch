@@ -73,6 +73,14 @@ function noticeCount(selectedData) {
 function smsCount(selectedData) {
 	return axios.get(`${config.smsUrl}/${selectedData}`);
 }
+// 일별 방문현황 인원
+function accessList(selectedData) {
+	return axios.get(`${config.accessUrl}/list/${selectedData}`);
+}
+// 일별 방문현황 차량
+function accessCarList(selectedData) {
+	return axios.get(`${config.accessUrl}/Carlist/${selectedData}`);
+}
 
 export {
 	requestRegist,
@@ -91,4 +99,6 @@ export {
 	smsCount,
 	entranceMax,
 	entranceCarMax,
+	accessList,
+	accessCarList,
 };

@@ -34,11 +34,11 @@ export default {
 		};
 	},
 	props: {
-		accessValue: {
+		accessCarValue: {
 			type: Array,
 			required: true,
 		},
-		accessDate: {
+		accessCarDate: {
 			type: Array,
 			required: true,
 		},
@@ -51,13 +51,13 @@ export default {
 		rerenderBarChart() {
 			this.renderChart(
 				{
-					labels: this.accessDate,
+					labels: this.accessCarDate,
 					datasets: [
 						{
-							label: '인원',
+							label: '차량',
 							colors: 'green',
-							backgroundColor: 'blue',
-							data: this.accessValue,
+							backgroundColor: 'red',
+							data: this.accessCarValue,
 						},
 						// {
 						// 	label: '차량',
@@ -72,10 +72,10 @@ export default {
 		},
 	},
 	watch: {
-		accessValue: {
+		accessCarValue: {
 			handler: 'rerenderBarChart',
 		},
-		accessDate: {
+		accessCarDate: {
 			handler: 'rerenderBarChart',
 		},
 	},

@@ -15,6 +15,8 @@ import {
 	smsCount,
 	entranceMax,
 	entranceCarMax,
+	accessList,
+	accessCarList,
 } from '@/api/index.js';
 
 export default {
@@ -106,5 +108,15 @@ export default {
 		const response = await smsCount(selectedData);
 
 		commit('set_SmsCount', response.data);
+	},
+	//일별 방문 현황 인원
+	async fetch_accessList({ commit }, selectedData) {
+		const response = await accessList(selectedData);
+		commit('set_accessList', response.data);
+	},
+	//일별 방문 현황 차량
+	async fetch_accessCarList({ commit }, selectedData) {
+		const response = await accessCarList(selectedData);
+		commit('set_accessCarList', response.data);
 	},
 };

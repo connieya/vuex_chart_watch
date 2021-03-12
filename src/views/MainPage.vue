@@ -35,7 +35,6 @@
 				</select>
 				월 서비스 이용현황
 			</h1>
-			{{ this.selectMonth }}
 		</div>
 		<div class="titleBox">
 			<div class="title">
@@ -77,7 +76,14 @@
 					<h2>일별 방문현황</h2>
 				</div>
 			</div>
-			<bar-chart></bar-chart>
+			<bar-chart
+				:accessValue="this.accessValue"
+				:accessDate="this.accessDate"
+			></bar-chart>
+			<bar-chart-2
+				:accessCarValue="this.accessCarValue"
+				:accessCarDate="this.accessCarDate"
+			></bar-chart-2>
 		</div>
 		<!-- titleBox !-->
 		<div class="titleBox">
@@ -247,8 +253,8 @@
 						<td>내용</td>
 					</tr>
 					<tr>
-						<td class="td-standard">d</td>
-						<td>d</td>
+						<!-- <td class="td-standard">d</td> -->
+						<!-- <td>d</td> -->
 					</tr>
 					<tr></tr>
 				</table>
@@ -261,15 +267,23 @@
 
 <script>
 import BarChart from '../components/BarChart.vue';
+import BarChart2 from '../components/BarChart2.vue';
+import { accessList, accessCarList } from '@/api/index';
 export default {
 	components: {
 		BarChart,
+		BarChart2,
 	},
 	data() {
 		return {
 			selectYear: '2021',
 			selectMonth: '2021-02-01',
-			concatData: '',
+			accessList: [],
+			accessValue: [],
+			accessDate: [],
+			acessCarList: [],
+			accessCarValue: [],
+			accessCarDate: [],
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -298,10 +312,29 @@ export default {
 				this.selectMonth = '2021-02-01';
 			}
 		},
+		async fetchAccessList() {
+			try {
+				const response = await accessList(this.selectMonth);
+				this.accessList = response.data;
+				this.accessValue = this.accessList.map(a => a[0]);
+				this.accessDate = this.accessList.map(a => a[1]);
+				console.log('으아아아아아아아', response);
+			} catch (error) {
+				console.log(error);
+			}
+		},
+		async fetchAccessCarList() {
+			try {
+				const response = await accessCarList(this.selectMonth);
+				this.acessCarList = response.data;
+				this.accessCarValue = this.acessCarList.map(a => a[0]);
+				this.accessCarDate = this.acessCarList.map(a => a[1]);
+			} catch (error) {
+				console.log(error);
+			}
+		},
 	},
-	created() {
-		// this.concatData = this.selectYear.concat(this.selectMonth);
-	},
+
 	watch: {
 		selectMonth: {
 			handler: function() {
@@ -337,6 +370,11 @@ export default {
 				this.$store.dispatch('fetch_noticeCount', this.selectMonth);
 				//sms 건수
 				this.$store.dispatch('fetch_SmsCount', this.selectMonth);
+				//일별 방문 현황 -인원
+				this.$store.dispatch('fetch_accessList', this.selectMonth);
+				//일별 방문 현황 -인원
+				this.fetchAccessList();
+				this.fetchAccessCarList();
 			},
 
 			immediate: true,
