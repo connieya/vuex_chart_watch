@@ -45,6 +45,7 @@
 					<h2>고객 정보</h2>
 				</div>
 			</div>
+			{{ this.accessList }}
 			<!--title -->
 			<div>
 				<table>
@@ -65,8 +66,6 @@
 					</tr>
 				</table>
 			</div>
-			{{ this.example }}
-			,{{ this.accessDate }}
 			<!-- table -->
 		</div>
 		<div class="titleBox">
@@ -80,14 +79,14 @@
 			</div>
 			<bar-chart
 				:accessValue="this.accessValue"
-				:accessDate="this.accessDate"
+				:accessDate="this.dynamicDate"
 			></bar-chart>
 			<bar-chart-2
 				:accessCarValue="this.accessCarValue"
 				:accessCarDate="this.accessCarDate"
 			></bar-chart-2>
 		</div>
-		{{ this.accessValue }}
+
 		<!-- titleBox !-->
 		<div class="titleBox">
 			<div class="title">
@@ -298,39 +297,7 @@ export default {
 			avg: '',
 			sumCar: '',
 			avgCar: '',
-			example: [
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-				'0',
-			],
+			dynamicDate: [],
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -363,14 +330,14 @@ export default {
 			try {
 				const response = await accessList(this.selectMonth);
 				this.accessList = response.data;
-				console.log('일별 인원 방문 현황 : ', this.accessList);
+				// console.log('일별 인원 방문 현황 : ', this.accessList);
 				this.accessValue = this.accessList.map(a => a[0]);
 				// this.accessDate = this.accessList.map(a => a[1]);
 				this.accessDate = this.accessList.map(a => a[1].substr(8, 2));
 
-				this.example[0] = '5';
 				this.accessList.forEach(item => {
-					console.log('asdadada', item);
+					// console.log('asdadada', item);
+					item[0];
 					// console.log('sads12121a'.item[1].substr(8, 2));
 				});
 			} catch (error) {
@@ -402,20 +369,24 @@ export default {
 			try {
 				const response = await entranceCarAvg(this.selectMonth);
 				this.entranceCarData = response.data;
-				console.log('11 : ', this.entranceCarData);
-				console.log('22 : ', this.entranceCarData.length);
 				this.sumCar = this.entranceCarData.reduce((a, b) => a + b);
-				console.log('33 :', this.sumCar);
 				this.avgCar = (this.sumCar / this.entranceCarData.length).toPrecision(
 					2,
 				);
-				console.log('44 : ', this.avgCar);
 			} catch (error) {
 				this.avgCar = '';
 				console.log(error);
 			}
 		},
-		propsDate() {},
+		LastDayOfMonth() {
+			const datas = new Date(
+				this.selectMonth.substr(0, 4),
+				this.selectMonth.substr(5, 2),
+				1,
+				-1,
+			).getDate();
+			this.dynamicDate = Array.from({ length: datas }, (v, i) => i + 1);
+		},
 	},
 
 	watch: {
@@ -463,6 +434,8 @@ export default {
 				this.fetchEntranceAvg();
 				// 출입 차량 평균
 				this.fetchEntranceCarAvg();
+				//마지막 날짜 구하기
+				this.LastDayOfMonth();
 			},
 
 			immediate: true,
