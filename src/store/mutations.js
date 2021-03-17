@@ -57,6 +57,10 @@ export default {
 	set_entranceCarMax(state, data) {
 		state.entranceCarMax = data;
 	},
+	// 출입 인원 평균
+	set_entranceAvg(state, data) {
+		state.entranceAvg = data;
+	},
 
 	//알림톡 건수
 	set_noticeCount(state, data) {

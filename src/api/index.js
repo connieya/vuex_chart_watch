@@ -64,6 +64,14 @@ function entranceMax(selectedData) {
 function entranceCarMax(selectedData) {
 	return axios.get(`${config.accessUrl}/entranceCarMax/${selectedData}`);
 }
+//출입 인원 평균
+function entranceAvg(selectedData) {
+	return axios.get(`${config.accessUrl}/entranceAvg/${selectedData}`);
+}
+//출입 차량 평균
+function entranceCarAvg(selectedData) {
+	return axios.get(`${config.accessUrl}/entranceCarAvg/${selectedData}`);
+}
 
 // 알림톡 건수
 function noticeCount(selectedData) {
@@ -99,6 +107,8 @@ export {
 	smsCount,
 	entranceMax,
 	entranceCarMax,
+	entranceAvg,
+	entranceCarAvg,
 	accessList,
 	accessCarList,
 };

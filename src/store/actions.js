@@ -15,6 +15,8 @@ import {
 	smsCount,
 	entranceMax,
 	entranceCarMax,
+	entranceAvg,
+	entranceCarAvg,
 	accessList,
 	accessCarList,
 } from '@/api/index.js';
@@ -95,6 +97,18 @@ export default {
 		const response = await entranceCarMax(selectedData);
 
 		commit('set_entranceCarMax', response.data);
+	},
+	//출입 인원 평균
+	async fetch_entranceAvg({ commit }, selectedData) {
+		const response = await entranceAvg(selectedData);
+
+		commit('set_entranceAvg', response.data);
+	},
+	//출입 차량 평균
+	async fetch_entranceCarAvg({ commit }, selectedData) {
+		const response = await entranceCarAvg(selectedData);
+
+		commit('set_entranceCarAvg', response.data);
 	},
 
 	//알림톡 건수

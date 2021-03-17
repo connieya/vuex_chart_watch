@@ -65,6 +65,8 @@
 					</tr>
 				</table>
 			</div>
+			{{ this.example }}
+			,{{ this.accessDate }}
 			<!-- table -->
 		</div>
 		<div class="titleBox">
@@ -85,6 +87,7 @@
 				:accessCarDate="this.accessCarDate"
 			></bar-chart-2>
 		</div>
+		{{ this.accessValue }}
 		<!-- titleBox !-->
 		<div class="titleBox">
 			<div class="title">
@@ -190,7 +193,7 @@
 						<td>{{ this.$store.state.accessVisitMaxTime }}</td>
 						<td>{{ this.$store.state.accessVisitAvgTime }}</td>
 						<td>{{ this.$store.state.entranceMax }}</td>
-						<td>154.3</td>
+						<td>{{ this.avg }}</td>
 						<td class="td-standard">SMS</td>
 						<td>{{ this.$store.state.SmsCount }}</td>
 					</tr>
@@ -199,7 +202,7 @@
 						<td>{{ this.$store.state.accessVisitCarMaxTime }}</td>
 						<td>{{ this.$store.state.accessVisitCarAvgTime }}</td>
 						<td>{{ this.$store.state.entranceCarMax }}</td>
-						<td>121.3</td>
+						<td>{{ this.avgCar }}</td>
 						<td class="td-standard">합계</td>
 						<td>
 							{{ this.$store.state.SmsCount + this.$store.state.noticeCount }}
@@ -268,7 +271,12 @@
 <script>
 import BarChart from '../components/BarChart.vue';
 import BarChart2 from '../components/BarChart2.vue';
-import { accessList, accessCarList } from '@/api/index';
+import {
+	accessList,
+	accessCarList,
+	entranceAvg,
+	entranceCarAvg,
+} from '@/api/index';
 export default {
 	components: {
 		BarChart,
@@ -278,12 +286,51 @@ export default {
 		return {
 			selectYear: '2021',
 			selectMonth: '2021-02-01',
-			accessList: [],
+			accessList: {},
 			accessValue: [],
 			accessDate: [],
 			acessCarList: [],
 			accessCarValue: [],
 			accessCarDate: [],
+			entranceData: [],
+			entranceCarData: [],
+			sum: '',
+			avg: '',
+			sumCar: '',
+			avgCar: '',
+			example: [
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+				'0',
+			],
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -316,9 +363,16 @@ export default {
 			try {
 				const response = await accessList(this.selectMonth);
 				this.accessList = response.data;
+				console.log('일별 인원 방문 현황 : ', this.accessList);
 				this.accessValue = this.accessList.map(a => a[0]);
-				this.accessDate = this.accessList.map(a => a[1]);
-				console.log('으아아아아아아아', response);
+				// this.accessDate = this.accessList.map(a => a[1]);
+				this.accessDate = this.accessList.map(a => a[1].substr(8, 2));
+
+				this.example[0] = '5';
+				this.accessList.forEach(item => {
+					console.log('asdadada', item);
+					// console.log('sads12121a'.item[1].substr(8, 2));
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -333,6 +387,35 @@ export default {
 				console.log(error);
 			}
 		},
+		async fetchEntranceAvg() {
+			try {
+				const response = await entranceAvg(this.selectMonth);
+				this.entranceData = response.data;
+				this.sum = this.entranceData.reduce((a, b) => a + b);
+				this.avg = (this.sum / this.entranceData.length).toPrecision(2);
+			} catch (error) {
+				this.avg = '';
+				console.log(error);
+			}
+		},
+		async fetchEntranceCarAvg() {
+			try {
+				const response = await entranceCarAvg(this.selectMonth);
+				this.entranceCarData = response.data;
+				console.log('11 : ', this.entranceCarData);
+				console.log('22 : ', this.entranceCarData.length);
+				this.sumCar = this.entranceCarData.reduce((a, b) => a + b);
+				console.log('33 :', this.sumCar);
+				this.avgCar = (this.sumCar / this.entranceCarData.length).toPrecision(
+					2,
+				);
+				console.log('44 : ', this.avgCar);
+			} catch (error) {
+				this.avgCar = '';
+				console.log(error);
+			}
+		},
+		propsDate() {},
 	},
 
 	watch: {
@@ -374,7 +457,12 @@ export default {
 				this.$store.dispatch('fetch_accessList', this.selectMonth);
 				//일별 방문 현황 -인원
 				this.fetchAccessList();
+				//일별 방문 현황 -차량
 				this.fetchAccessCarList();
+				//출입 인원 평균
+				this.fetchEntranceAvg();
+				// 출입 차량 평균
+				this.fetchEntranceCarAvg();
 			},
 
 			immediate: true,

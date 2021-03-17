@@ -25,6 +25,7 @@ export default new Vuex.Store({
 		SmsCount: '',
 		accessList: [],
 		accessCarList: [],
+		entranceAvg: [],
 	},
 	mutations: mutations,
 	actions: actions,
