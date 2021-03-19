@@ -41,11 +41,12 @@
 				<div class="square">
 					<i class="fas fa-square"></i>
 				</div>
+
 				<div>
 					<h2>고객 정보</h2>
 				</div>
 			</div>
-			{{ this.accessList }}
+
 			<!--title -->
 			<div>
 				<table>
@@ -79,12 +80,9 @@
 			</div>
 			<bar-chart
 				:accessValue="this.accessValue"
-				:accessDate="this.dynamicDate"
-			></bar-chart>
-			<bar-chart-2
+				:accessDate="this.accessDate"
 				:accessCarValue="this.accessCarValue"
-				:accessCarDate="this.accessCarDate"
-			></bar-chart-2>
+			></bar-chart>
 		</div>
 
 		<!-- titleBox !-->
@@ -269,7 +267,6 @@
 
 <script>
 import BarChart from '../components/BarChart.vue';
-import BarChart2 from '../components/BarChart2.vue';
 import {
 	accessList,
 	accessCarList,
@@ -279,7 +276,6 @@ import {
 export default {
 	components: {
 		BarChart,
-		BarChart2,
 	},
 	data() {
 		return {
@@ -288,7 +284,7 @@ export default {
 			accessList: {},
 			accessValue: [],
 			accessDate: [],
-			acessCarList: [],
+			accessCarList: [],
 			accessCarValue: [],
 			accessCarDate: [],
 			entranceData: [],
@@ -297,7 +293,6 @@ export default {
 			avg: '',
 			sumCar: '',
 			avgCar: '',
-			dynamicDate: [],
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -316,6 +311,7 @@ export default {
 				{ value: '2020-11-01', text: '11' },
 				{ value: '2020-12-01', text: '12' },
 			],
+			datas: '',
 		};
 	},
 	methods: {
@@ -330,15 +326,9 @@ export default {
 			try {
 				const response = await accessList(this.selectMonth);
 				this.accessList = response.data;
-				// console.log('일별 인원 방문 현황 : ', this.accessList);
-				this.accessValue = this.accessList.map(a => a[0]);
-				// this.accessDate = this.accessList.map(a => a[1]);
-				this.accessDate = this.accessList.map(a => a[1].substr(8, 2));
-
+				this.accessValue = Array.from({ length: this.datas }, () => 0);
 				this.accessList.forEach(item => {
-					// console.log('asdadada', item);
-					item[0];
-					// console.log('sads12121a'.item[1].substr(8, 2));
+					this.accessValue[Number(item.entrance.substr(8, 2)) - 1] = item.count;
 				});
 			} catch (error) {
 				console.log(error);
@@ -347,9 +337,12 @@ export default {
 		async fetchAccessCarList() {
 			try {
 				const response = await accessCarList(this.selectMonth);
-				this.acessCarList = response.data;
-				this.accessCarValue = this.acessCarList.map(a => a[0]);
-				this.accessCarDate = this.acessCarList.map(a => a[1]);
+				this.accessCarList = response.data;
+				this.accessCarValue = Array.from({ length: this.datas }, () => 0);
+				this.accessCarList.forEach(item => {
+					this.accessCarValue[Number(item.entrance.substr(8, 2)) - 1] =
+						item.count;
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -379,13 +372,15 @@ export default {
 			}
 		},
 		LastDayOfMonth() {
-			const datas = new Date(
+			this.datas = new Date(
 				this.selectMonth.substr(0, 4),
 				this.selectMonth.substr(5, 2),
 				1,
 				-1,
 			).getDate();
-			this.dynamicDate = Array.from({ length: datas }, (v, i) => i + 1);
+		},
+		getAccessDate() {
+			this.accessDate = Array.from({ length: this.datas }, (v, i) => i + 1);
 		},
 	},
 
@@ -438,6 +433,12 @@ export default {
 				this.LastDayOfMonth();
 			},
 
+			immediate: true,
+		},
+		datas: {
+			handler: function() {
+				this.getAccessDate();
+			},
 			immediate: true,
 		},
 	},

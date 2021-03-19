@@ -38,6 +38,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		accessCarValue: {
+			type: Array,
+			required: true,
+		},
 		accessDate: {
 			type: Array,
 			required: true,
@@ -53,14 +57,14 @@ export default {
 							label: '인원',
 							colors: 'green',
 							backgroundColor: 'blue',
-							data: ['2', '0', '5'],
+							data: this.accessValue,
 						},
-						// {
-						// 	label: '차량',
-						// 	colors: 'green',
-						// 	backgroundColor: 'red',
-						// 	data: [106, 122, 133, 131, 104, 45, 26, 154],
-						// },
+						{
+							label: '차량',
+							colors: 'green',
+							backgroundColor: 'red',
+							data: this.accessCarValue,
+						},
 					],
 				},
 				this.options,

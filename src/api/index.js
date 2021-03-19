@@ -83,11 +83,11 @@ function smsCount(selectedData) {
 }
 // 일별 방문현황 인원
 function accessList(selectedData) {
-	return axios.get(`${config.accessUrl}/list/${selectedData}`);
+	return axios.get(`${config.accessUrl}/getList/${selectedData}`);
 }
 // 일별 방문현황 차량
 function accessCarList(selectedData) {
-	return axios.get(`${config.accessUrl}/Carlist/${selectedData}`);
+	return axios.get(`${config.accessUrl}/carList/${selectedData}`);
 }
 
 export {
