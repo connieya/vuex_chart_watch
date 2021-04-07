@@ -1,8 +1,9 @@
 <script>
 import { Bar } from 'vue-chartjs';
-
+// const { reactiveProp } = mixins;
 export default {
 	extends: Bar,
+	// mixins: [reactiveProp],
 	data() {
 		return {
 			options: {
@@ -34,37 +35,40 @@ export default {
 		};
 	},
 	props: {
+		accessValue: {
+			type: Array,
+			required: true,
+		},
 		accessCarValue: {
 			type: Array,
 			required: true,
 		},
-		accessCarDate: {
+		accessDate: {
 			type: Array,
 			required: true,
 		},
-		// date: {
-		// 	type: Array,
-		// 	required: true,
-		// },
+	},
+	mounted() {
+		this.renderBarChart();
 	},
 	methods: {
-		rerenderBarChart() {
+		renderBarChart: function() {
 			this.renderChart(
 				{
-					labels: this.accessCarDate,
+					labels: this.accessDate,
 					datasets: [
+						{
+							label: '인원',
+							colors: 'green',
+							backgroundColor: 'blue',
+							data: this.accessValue,
+						},
 						{
 							label: '차량',
 							colors: 'green',
 							backgroundColor: 'red',
 							data: this.accessCarValue,
 						},
-						// {
-						// 	label: '차량',
-						// 	colors: 'green',
-						// 	backgroundColor: 'red',
-						// 	data: [106, 122, 133, 131, 104, 45, 26, 154],
-						// },
 					],
 				},
 				this.options,
@@ -72,11 +76,17 @@ export default {
 		},
 	},
 	watch: {
-		accessCarValue: {
-			handler: 'rerenderBarChart',
+		accessCarValue: function() {
+			this.$data._chart.destroy();
+			this.renderBarChart();
 		},
-		accessCarDate: {
-			handler: 'rerenderBarChart',
+		accessValue: function() {
+			this.$data._chart.destroy();
+			this.renderBarChart();
+		},
+		accessDate: function() {
+			this.$data._chart.destroy();
+			this.renderBarChart();
 		},
 	},
 };

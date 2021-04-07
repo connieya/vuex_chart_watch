@@ -35,6 +35,7 @@
 				</select>
 				월 서비스 이용현황
 			</h1>
+			{{ this.accessCarValue }}
 		</div>
 		<div class="titleBox">
 			<div class="title">
@@ -78,6 +79,12 @@
 					<h2>일별 방문현황</h2>
 				</div>
 			</div>
+			<nlobby-chart
+				:accessValue="this.accessValue"
+				:accessDate="this.accessDate"
+				:accessCarValue="this.accessCarValue"
+			></nlobby-chart>
+
 			<bar-chart
 				:accessValue="this.accessValue"
 				:accessDate="this.accessDate"
@@ -112,20 +119,24 @@
 						<td>합계</td>
 					</tr>
 					<tr>
-						<td>{{ this.$store.state.requestRegist }}</td>
-						<td>{{ this.$store.state.requestReserve }}</td>
+						<td>{{ numberWithCommas(this.$store.state.requestRegist) }}</td>
+						<td>{{ numberWithCommas(this.$store.state.requestReserve) }}</td>
 						<td>
 							{{
-								this.$store.state.requestRegist +
-									this.$store.state.requestReserve
+								numberWithCommas(
+									this.$store.state.requestRegist +
+										this.$store.state.requestReserve,
+								)
 							}}
 						</td>
-						<td>{{ this.$store.state.requestRegistCar }}</td>
-						<td>{{ this.$store.state.requestReserveCar }}</td>
+						<td>{{ numberWithCommas(this.$store.state.requestRegistCar) }}</td>
+						<td>{{ numberWithCommas(this.$store.state.requestReserveCar) }}</td>
 						<td>
 							{{
-								this.$store.state.requestRegistCar +
-									this.$store.state.requestReserveCar
+								numberWithCommas(
+									this.$store.state.requestRegistCar +
+										this.$store.state.requestReserveCar,
+								)
 							}}
 						</td>
 					</tr>
@@ -139,19 +150,24 @@
 						<td>합계</td>
 					</tr>
 					<tr>
-						<td>{{ this.$store.state.accessVisit }}</td>
-						<td>{{ this.$store.state.accessVisitNot }}</td>
+						<td>{{ numberWithCommas(this.$store.state.accessVisit) }}</td>
+						<td>{{ numberWithCommas(this.$store.state.accessVisitNot) }}</td>
 						<td>
 							{{
-								this.$store.state.accessVisit + this.$store.state.accessVisitNot
+								numberWithCommas(
+									this.$store.state.accessVisit +
+										this.$store.state.accessVisitNot,
+								)
 							}}
 						</td>
-						<td>{{ this.$store.state.accessVisitCar }}</td>
-						<td>{{ this.$store.state.accessVisitNotCar }}</td>
+						<td>{{ numberWithCommas(this.$store.state.accessVisitCar) }}</td>
+						<td>{{ numberWithCommas(this.$store.state.accessVisitNotCar) }}</td>
 						<td>
 							{{
-								this.$store.state.accessVisitCar +
-									this.$store.state.accessVisitNotCar
+								numberWithCommas(
+									this.$store.state.accessVisitCar +
+										this.$store.state.accessVisitNotCar,
+								)
 							}}
 						</td>
 					</tr>
@@ -183,7 +199,7 @@
 						<td>최대</td>
 						<td>평균</td>
 						<td class="td-standard">알림톡</td>
-						<td>{{ this.$store.state.noticeCount }}</td>
+						<td>{{ numberWithCommas(this.$store.state.noticeCount) }}</td>
 					</tr>
 					<tr>
 						<td class="td-standard">인원</td>
@@ -192,17 +208,23 @@
 						<td>{{ this.$store.state.entranceMax }}</td>
 						<td>{{ this.avg }}</td>
 						<td class="td-standard">SMS</td>
-						<td>{{ this.$store.state.SmsCount }}</td>
+						<td>{{ numberWithCommas(this.$store.state.SmsCount) }}</td>
 					</tr>
 					<tr>
 						<td class="td-standard">차량</td>
-						<td>{{ this.$store.state.accessVisitCarMaxTime }}</td>
+						<td>
+							{{ numberWithCommas(this.$store.state.accessVisitCarMaxTime) }}
+						</td>
 						<td>{{ this.$store.state.accessVisitCarAvgTime }}</td>
-						<td>{{ this.$store.state.entranceCarMax }}</td>
+						<td>{{ numberWithCommas(this.$store.state.entranceCarMax) }}</td>
 						<td>{{ this.avgCar }}</td>
 						<td class="td-standard">합계</td>
 						<td>
-							{{ this.$store.state.SmsCount + this.$store.state.noticeCount }}
+							{{
+								numberWithCommas(
+									this.$store.state.SmsCount + this.$store.state.noticeCount,
+								)
+							}}
 						</td>
 					</tr>
 				</table>
@@ -267,6 +289,7 @@
 
 <script>
 import BarChart from '../components/BarChart.vue';
+import NlobbyChart from '../components/NlobbyChart.vue';
 import {
 	accessList,
 	accessCarList,
@@ -276,6 +299,7 @@ import {
 export default {
 	components: {
 		BarChart,
+		NlobbyChart,
 	},
 	data() {
 		return {
@@ -315,6 +339,10 @@ export default {
 		};
 	},
 	methods: {
+		numberWithCommas(x) {
+			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		},
+
 		changeYear() {
 			if (this.selectYear == '2020') {
 				this.selectMonth = '2020-01-01';
@@ -322,6 +350,7 @@ export default {
 				this.selectMonth = '2021-02-01';
 			}
 		},
+		// 출입 일별 방문현황 - 인원
 		async fetchAccessList() {
 			try {
 				const response = await accessList(this.selectMonth);
@@ -330,10 +359,12 @@ export default {
 				this.accessList.forEach(item => {
 					this.accessValue[Number(item.entrance.substr(8, 2)) - 1] = item.count;
 				});
+				console.log('인원 리스트 : ', this.accessValue);
 			} catch (error) {
 				console.log(error);
 			}
 		},
+		// 출입 일별 방문현황 - 차량
 		async fetchAccessCarList() {
 			try {
 				const response = await accessCarList(this.selectMonth);
@@ -343,6 +374,7 @@ export default {
 					this.accessCarValue[Number(item.entrance.substr(8, 2)) - 1] =
 						item.count;
 				});
+				console.log('차량 리스트', this.accessCarValue);
 			} catch (error) {
 				console.log(error);
 			}
@@ -352,7 +384,7 @@ export default {
 				const response = await entranceAvg(this.selectMonth);
 				this.entranceData = response.data;
 				this.sum = this.entranceData.reduce((a, b) => a + b);
-				this.avg = (this.sum / this.entranceData.length).toPrecision(2);
+				this.avg = Math.floor(this.sum / this.entranceData.length);
 			} catch (error) {
 				this.avg = '';
 				console.log(error);
@@ -362,10 +394,10 @@ export default {
 			try {
 				const response = await entranceCarAvg(this.selectMonth);
 				this.entranceCarData = response.data;
+				console.log('길이 ', this.entranceCarData.length);
 				this.sumCar = this.entranceCarData.reduce((a, b) => a + b);
-				this.avgCar = (this.sumCar / this.entranceCarData.length).toPrecision(
-					2,
-				);
+				console.log('합계', this.sumCar);
+				this.avgCar = Math.floor(this.sumCar / this.entranceCarData.length);
 			} catch (error) {
 				this.avgCar = '';
 				console.log(error);
