@@ -1,8 +1,8 @@
 <script>
-import { Bar } from 'vue-chartjs';
+import { Line } from 'vue-chartjs';
 
 export default {
-	extends: Bar,
+	extends: Line,
 	data() {
 		return {
 			options: {
@@ -56,14 +56,22 @@ export default {
 						{
 							label: '인원',
 							colors: 'green',
-							backgroundColor: 'blue',
+							borderWidth: 2,
+							backgroundColor: 'white',
 							data: this.accessValue,
+							fill: false,
+							pointBackgroundColor: 'black',
+							borderColor: 'blue',
 						},
 						{
 							label: '차량',
 							colors: 'green',
-							backgroundColor: 'red',
+							borderWidth: 2,
+							backgroundColor: 'white',
 							data: this.accessCarValue,
+							fill: false,
+							pointBackgroundColor: 'red',
+							borderColor: 'red',
 						},
 					],
 				},
@@ -72,11 +80,23 @@ export default {
 		},
 	},
 	watch: {
-		accessValue: {
-			handler: 'rerenderBarChart',
+		// accessValue: {
+		// 	handler: 'rerenderBarChart',
+		// },
+		// accessDate: {
+		// 	handler: 'rerenderBarChart',
+		// },
+		// accessCarValue: {
+		// 	handler: 'rerenderBarChart',
+		// },
+		accessValue() {
+			this.rerenderBarChart();
 		},
-		accessDate: {
-			handler: 'rerenderBarChart',
+		accessDate() {
+			this.rerenderBarChart();
+		},
+		accessCarValue() {
+			this.rerenderBarChart();
 		},
 	},
 };
