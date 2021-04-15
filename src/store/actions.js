@@ -20,6 +20,7 @@ import {
 	accessList,
 	accessCarList,
 } from '@/api/index.js';
+import { userCount } from '../api';
 
 export default {
 	// 방문객 신청현황
@@ -132,5 +133,10 @@ export default {
 	async fetch_accessCarList({ commit }, selectedData) {
 		const response = await accessCarList(selectedData);
 		commit('set_accessCarList', response.data);
+	},
+	// 고객 사용자 수
+	async fetch_userCount({ commit }) {
+		const response = await userCount();
+		commit('set_userCount', response.data);
 	},
 };

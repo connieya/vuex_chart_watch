@@ -61,6 +61,10 @@ export default {
 	set_entranceAvg(state, data) {
 		state.entranceAvg = data;
 	},
+	// 출입 차량 평균
+	set_entranceCarAvg(state, data) {
+		state.entranceCarAvg = data;
+	},
 
 	//알림톡 건수
 	set_noticeCount(state, data) {
@@ -77,5 +81,9 @@ export default {
 	//일별 방문 현황- 차량
 	set_accessCarList(state, data) {
 		state.accessCarList = data;
+	},
+	//고객 사용자 수
+	set_userCount(state, data) {
+		state.userCount = data;
 	},
 };

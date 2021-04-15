@@ -72,7 +72,6 @@ function entranceAvg(selectedData) {
 function entranceCarAvg(selectedData) {
 	return axios.get(`${config.accessUrl}/entranceCarAvg/${selectedData}`);
 }
-
 // 알림톡 건수
 function noticeCount(selectedData) {
 	return axios.get(`${config.noticeUrl}/${selectedData}`);
@@ -89,7 +88,10 @@ function accessList(selectedData) {
 function accessCarList(selectedData) {
 	return axios.get(`${config.accessUrl}/carList/${selectedData}`);
 }
-
+// 고객 사용자 수
+function userCount() {
+	return axios.get('http://localhost:8000/nlobby/user');
+}
 export {
 	requestRegist,
 	requestReserve,
@@ -111,4 +113,5 @@ export {
 	entranceCarAvg,
 	accessList,
 	accessCarList,
+	userCount,
 };

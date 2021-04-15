@@ -35,7 +35,6 @@
 				</select>
 				월 서비스 이용현황
 			</h1>
-			{{ this.accessCarValue }}
 		</div>
 		<div class="titleBox">
 			<div class="title">
@@ -64,7 +63,7 @@
 						<td>MAIN</td>
 						<td>클라우드형</td>
 						<td></td>
-						<td></td>
+						<td>{{ this.$store.state.userCount }}</td>
 					</tr>
 				</table>
 			</div>
@@ -79,17 +78,12 @@
 					<h2>일별 방문현황</h2>
 				</div>
 			</div>
+
 			<nlobby-chart
 				:accessValue="this.accessValue"
 				:accessDate="this.accessDate"
 				:accessCarValue="this.accessCarValue"
 			></nlobby-chart>
-
-			<bar-chart
-				:accessValue="this.accessValue"
-				:accessDate="this.accessDate"
-				:accessCarValue="this.accessCarValue"
-			></bar-chart>
 		</div>
 
 		<!-- titleBox !-->
@@ -206,7 +200,7 @@
 						<td>{{ this.$store.state.accessVisitMaxTime }}</td>
 						<td>{{ this.$store.state.accessVisitAvgTime }}</td>
 						<td>{{ this.$store.state.entranceMax }}</td>
-						<td>{{ this.avg }}</td>
+						<td>{{ this.$store.state.entranceAvg }}</td>
 						<td class="td-standard">SMS</td>
 						<td>{{ numberWithCommas(this.$store.state.SmsCount) }}</td>
 					</tr>
@@ -217,7 +211,7 @@
 						</td>
 						<td>{{ this.$store.state.accessVisitCarAvgTime }}</td>
 						<td>{{ numberWithCommas(this.$store.state.entranceCarMax) }}</td>
-						<td>{{ this.avgCar }}</td>
+						<td>{{ this.$store.state.entranceCarAvg }}</td>
 						<td class="td-standard">합계</td>
 						<td>
 							{{
@@ -230,6 +224,7 @@
 				</table>
 			</div>
 		</div>
+
 		<!-- titleBox !-->
 		<div class="titleBox">
 			<div class="title">
@@ -288,17 +283,12 @@
 </template>
 
 <script>
-import BarChart from '../components/BarChart.vue';
+// import BarChart from '../components/BarChart.vue';
 import NlobbyChart from '../components/NlobbyChart.vue';
-import {
-	accessList,
-	accessCarList,
-	entranceAvg,
-	entranceCarAvg,
-} from '@/api/index';
+import { accessList, accessCarList } from '@/api/index';
 export default {
 	components: {
-		BarChart,
+		// BarChart,
 		NlobbyChart,
 	},
 	data() {
@@ -311,12 +301,6 @@ export default {
 			accessCarList: [],
 			accessCarValue: [],
 			accessCarDate: [],
-			entranceData: [],
-			entranceCarData: [],
-			sum: '',
-			avg: '',
-			sumCar: '',
-			avgCar: '',
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -379,30 +363,7 @@ export default {
 				console.log(error);
 			}
 		},
-		async fetchEntranceAvg() {
-			try {
-				const response = await entranceAvg(this.selectMonth);
-				this.entranceData = response.data;
-				this.sum = this.entranceData.reduce((a, b) => a + b);
-				this.avg = Math.floor(this.sum / this.entranceData.length);
-			} catch (error) {
-				this.avg = '';
-				console.log(error);
-			}
-		},
-		async fetchEntranceCarAvg() {
-			try {
-				const response = await entranceCarAvg(this.selectMonth);
-				this.entranceCarData = response.data;
-				console.log('길이 ', this.entranceCarData.length);
-				this.sumCar = this.entranceCarData.reduce((a, b) => a + b);
-				console.log('합계', this.sumCar);
-				this.avgCar = Math.floor(this.sumCar / this.entranceCarData.length);
-			} catch (error) {
-				this.avgCar = '';
-				console.log(error);
-			}
-		},
+
 		LastDayOfMonth() {
 			this.datas = new Date(
 				this.selectMonth.substr(0, 4),
@@ -414,6 +375,9 @@ export default {
 		getAccessDate() {
 			this.accessDate = Array.from({ length: this.datas }, (v, i) => i + 1);
 		},
+	},
+	created() {
+		this.$store.dispatch('fetch_userCount');
 	},
 
 	watch: {
@@ -447,6 +411,10 @@ export default {
 				this.$store.dispatch('fetch_entranceMax', this.selectMonth);
 				//출입 차량 최대
 				this.$store.dispatch('fetch_entranceCarMax', this.selectMonth);
+				//출입 인원 평균
+				this.$store.dispatch('fetch_entranceAvg', this.selectMonth);
+				//출입 차량 평균
+				this.$store.dispatch('fetch_entranceCarAvg', this.selectMonth);
 				//알림 톡 건수
 				this.$store.dispatch('fetch_noticeCount', this.selectMonth);
 				//sms 건수
@@ -457,12 +425,9 @@ export default {
 				this.fetchAccessList();
 				//일별 방문 현황 -차량
 				this.fetchAccessCarList();
-				//출입 인원 평균
-				this.fetchEntranceAvg();
-				// 출입 차량 평균
-				this.fetchEntranceCarAvg();
 				//마지막 날짜 구하기
 				this.LastDayOfMonth();
+				//고객 사용자수
 			},
 
 			immediate: true,
