@@ -74,14 +74,19 @@ export default {
 	set_SmsCount(state, data) {
 		state.SmsCount = data;
 	},
-	//일별 방문 현황- 인원
-	set_accessList(state, data) {
-		state.accessList = data;
+	//차트 날짜 데이터
+	set_charDate(state, data) {
+		state.chartDate = data;
 	},
-	//일별 방문 현황- 차량
-	set_accessCarList(state, data) {
-		state.accessCarList = data;
+	// 일별 인원 수
+	set_visitCount(state, data) {
+		state.visitCount = data;
 	},
+	// 일별 차량 방문 수
+	set_visitCarCount(state, data) {
+		state.visitCarCount = data;
+	},
+
 	//고객 사용자 수
 	set_userCount(state, data) {
 		state.userCount = data;

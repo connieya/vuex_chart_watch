@@ -80,13 +80,17 @@ function noticeCount(selectedData) {
 function smsCount(selectedData) {
 	return axios.get(`${config.smsUrl}/${selectedData}`);
 }
-// 일별 방문현황 인원
-function accessList(selectedData) {
-	return axios.get(`${config.accessUrl}/getList/${selectedData}`);
+// 차트 날짜 데이터 값
+function chartDate(selectedDate) {
+	return axios.get(`${config.accessUrl}/lastDate/${selectedDate}`);
 }
-// 일별 방문현황 차량
-function accessCarList(selectedData) {
-	return axios.get(`${config.accessUrl}/carList/${selectedData}`);
+// 일별 인원수
+function visitCount(selectedDate) {
+	return axios.get(`${config.accessUrl}/count/${selectedDate}`);
+}
+// 일별 차량 방문수
+function visitCarCount(selectedDate) {
+	return axios.get(`${config.accessUrl}/visitCarCount/${selectedDate}`);
 }
 // 고객 사용자 수
 function userCount() {
@@ -111,7 +115,8 @@ export {
 	entranceCarMax,
 	entranceAvg,
 	entranceCarAvg,
-	accessList,
-	accessCarList,
 	userCount,
+	chartDate,
+	visitCount,
+	visitCarCount,
 };

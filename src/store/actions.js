@@ -17,10 +17,11 @@ import {
 	entranceCarMax,
 	entranceAvg,
 	entranceCarAvg,
-	accessList,
-	accessCarList,
+	chartDate,
+	userCount,
+	visitCarCount,
+	visitCount,
 } from '@/api/index.js';
-import { userCount } from '../api';
 
 export default {
 	// 방문객 신청현황
@@ -124,16 +125,22 @@ export default {
 
 		commit('set_SmsCount', response.data);
 	},
-	//일별 방문 현황 인원
-	async fetch_accessList({ commit }, selectedData) {
-		const response = await accessList(selectedData);
-		commit('set_accessList', response.data);
+	//차트 날짜 데이터
+	async fetch_chartDate({ commit }, selectedDate) {
+		const response = await chartDate(selectedDate);
+		commit('set_charDate', response.data);
 	},
-	//일별 방문 현황 차량
-	async fetch_accessCarList({ commit }, selectedData) {
-		const response = await accessCarList(selectedData);
-		commit('set_accessCarList', response.data);
+	//일변 인원 수
+	async fetch_visitCount({ commit }, selectedDate) {
+		const response = await visitCount(selectedDate);
+		commit('set_visitCount', response.data);
 	},
+	//일별 차량 방문 수
+	async fetch_visitCarCount({ commit }, selectedDate) {
+		const response = await visitCarCount(selectedDate);
+		commit('set_visitCarCount', response.data);
+	},
+
 	// 고객 사용자 수
 	async fetch_userCount({ commit }) {
 		const response = await userCount();

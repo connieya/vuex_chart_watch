@@ -36,6 +36,10 @@
 				월 서비스 이용현황
 			</h1>
 		</div>
+
+		{{ this.$store.state.chartDate }} <br />
+		{{ this.$store.state.visitCount }} <br />
+		{{ this.$store.state.visitCarCount }}
 		<div class="titleBox">
 			<div class="title">
 				<div class="square">
@@ -80,9 +84,9 @@
 			</div>
 
 			<nlobby-chart
-				:accessValue="this.accessValue"
-				:accessDate="this.accessDate"
-				:accessCarValue="this.accessCarValue"
+				:accessValue="this.$store.state.visitCount"
+				:accessDate="this.$store.state.chartDate"
+				:accessCarValue="this.$store.state.visitCarCount"
 			></nlobby-chart>
 		</div>
 
@@ -283,24 +287,15 @@
 </template>
 
 <script>
-// import BarChart from '../components/BarChart.vue';
 import NlobbyChart from '../components/NlobbyChart.vue';
-import { accessList, accessCarList } from '@/api/index';
 export default {
 	components: {
-		// BarChart,
 		NlobbyChart,
 	},
 	data() {
 		return {
 			selectYear: '2021',
 			selectMonth: '2021-02-01',
-			accessList: {},
-			accessValue: [],
-			accessDate: [],
-			accessCarList: [],
-			accessCarValue: [],
-			accessCarDate: [],
 			month2021: [
 				{ value: '2021-01-01', text: '01' },
 				{ value: '2021-02-01', text: '02' },
@@ -319,7 +314,6 @@ export default {
 				{ value: '2020-11-01', text: '11' },
 				{ value: '2020-12-01', text: '12' },
 			],
-			datas: '',
 		};
 	},
 	methods: {
@@ -333,47 +327,6 @@ export default {
 			} else {
 				this.selectMonth = '2021-02-01';
 			}
-		},
-		// 출입 일별 방문현황 - 인원
-		async fetchAccessList() {
-			try {
-				const response = await accessList(this.selectMonth);
-				this.accessList = response.data;
-				this.accessValue = Array.from({ length: this.datas }, () => 0);
-				this.accessList.forEach(item => {
-					this.accessValue[Number(item.entrance.substr(8, 2)) - 1] = item.count;
-				});
-				console.log('인원 리스트 : ', this.accessValue);
-			} catch (error) {
-				console.log(error);
-			}
-		},
-		// 출입 일별 방문현황 - 차량
-		async fetchAccessCarList() {
-			try {
-				const response = await accessCarList(this.selectMonth);
-				this.accessCarList = response.data;
-				this.accessCarValue = Array.from({ length: this.datas }, () => 0);
-				this.accessCarList.forEach(item => {
-					this.accessCarValue[Number(item.entrance.substr(8, 2)) - 1] =
-						item.count;
-				});
-				console.log('차량 리스트', this.accessCarValue);
-			} catch (error) {
-				console.log(error);
-			}
-		},
-
-		LastDayOfMonth() {
-			this.datas = new Date(
-				this.selectMonth.substr(0, 4),
-				this.selectMonth.substr(5, 2),
-				1,
-				-1,
-			).getDate();
-		},
-		getAccessDate() {
-			this.accessDate = Array.from({ length: this.datas }, (v, i) => i + 1);
 		},
 	},
 	created() {
@@ -421,21 +374,14 @@ export default {
 				this.$store.dispatch('fetch_SmsCount', this.selectMonth);
 				//일별 방문 현황 -인원
 				this.$store.dispatch('fetch_accessList', this.selectMonth);
-				//일별 방문 현황 -인원
-				this.fetchAccessList();
-				//일별 방문 현황 -차량
-				this.fetchAccessCarList();
-				//마지막 날짜 구하기
-				this.LastDayOfMonth();
-				//고객 사용자수
+				//차트 날짜 데이터
+				this.$store.dispatch('fetch_chartDate', this.selectMonth);
+				// 일별 인원 수
+				this.$store.dispatch('fetch_visitCount', this.selectMonth);
+				// 일별 차량 방문 수
+				this.$store.dispatch('fetch_visitCarCount', this.selectMonth);
 			},
 
-			immediate: true,
-		},
-		datas: {
-			handler: function() {
-				this.getAccessDate();
-			},
 			immediate: true,
 		},
 	},
