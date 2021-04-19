@@ -96,6 +96,13 @@ function visitCarCount(selectedDate) {
 function userCount() {
 	return axios.get('http://localhost:8000/nlobby/user');
 }
+// 엑셀로 출력
+function getExcelData(date) {
+	return axios.request(
+		`http://localhost:8000/api/nlobby/request/${date}/report.xls`,
+		{ responseType: 'blob' },
+	);
+}
 export {
 	requestRegist,
 	requestReserve,
@@ -119,4 +126,5 @@ export {
 	chartDate,
 	visitCount,
 	visitCarCount,
+	getExcelData,
 };

@@ -36,22 +36,24 @@
 				월 서비스 이용현황
 			</h1>
 		</div>
-
-		{{ this.$store.state.chartDate }} <br />
+		<div class="btn-info">
+			<button class="excelBtn" @click="excelWrite">엑셀로 출력</button>
+		</div>
+		<!-- {{ this.$store.state.chartDate }} <br />
 		{{ this.$store.state.visitCount }} <br />
-		{{ this.$store.state.visitCarCount }}
+		{{ this.$store.state.visitCarCount }} -->
+
 		<div class="titleBox">
 			<div class="title">
 				<div class="square">
 					<i class="fas fa-square"></i>
 				</div>
 
-				<div>
-					<h2>고객 정보</h2>
-				</div>
+				<h2>고객 정보</h2>
 			</div>
 
 			<!--title -->
+
 			<div>
 				<table>
 					<tr>
@@ -73,6 +75,7 @@
 			</div>
 			<!-- table -->
 		</div>
+
 		<div class="titleBox">
 			<div class="title">
 				<div class="square">
@@ -288,6 +291,7 @@
 
 <script>
 import NlobbyChart from '../components/NlobbyChart.vue';
+import { getExcelData } from '../api/index';
 export default {
 	components: {
 		NlobbyChart,
@@ -326,6 +330,15 @@ export default {
 				this.selectMonth = '2020-01-01';
 			} else {
 				this.selectMonth = '2021-02-01';
+			}
+		},
+		async excelWrite() {
+			try {
+				const response = await getExcelData(this.selectMonth);
+				console.log(this.selectMonth);
+				console.log(response);
+			} catch (error) {
+				console.log(error);
 			}
 		},
 	},
@@ -372,14 +385,13 @@ export default {
 				this.$store.dispatch('fetch_noticeCount', this.selectMonth);
 				//sms 건수
 				this.$store.dispatch('fetch_SmsCount', this.selectMonth);
-				//일별 방문 현황 -인원
-				this.$store.dispatch('fetch_accessList', this.selectMonth);
 				//차트 날짜 데이터
 				this.$store.dispatch('fetch_chartDate', this.selectMonth);
 				// 일별 인원 수
 				this.$store.dispatch('fetch_visitCount', this.selectMonth);
 				// 일별 차량 방문 수
 				this.$store.dispatch('fetch_visitCarCount', this.selectMonth);
+				this.excelWrite();
 			},
 
 			immediate: true,
@@ -419,5 +431,20 @@ td {
 }
 .titleBox {
 	width: 100%;
+}
+.btn-info {
+	display: flex;
+	justify-content: flex-end;
+}
+.excelBtn {
+	background-color: teal;
+	color: white;
+	border: 1px solid black;
+	border-radius: 6%;
+	text-align: end;
+	font-size: 25px;
+	margin: 5px;
+	padding: 5px;
+	cursor: pointer;
 }
 </style>

@@ -77,15 +77,12 @@ export default {
 	},
 	watch: {
 		accessCarValue: function() {
-			this.$data._chart.destroy();
 			this.renderBarChart();
 		},
 		accessValue: function() {
-			this.$data._chart.destroy();
 			this.renderBarChart();
 		},
 		accessDate: function() {
-			this.$data._chart.destroy();
 			this.renderBarChart();
 		},
 	},
