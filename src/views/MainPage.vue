@@ -37,7 +37,7 @@
 			</h1>
 		</div>
 		<div class="btn-info">
-			<button class="excelBtn" @click="excelWrite">엑셀로 출력</button>
+			<button class="excelBtn" v-on:click="excelAxios">엑셀로 출력</button>
 		</div>
 		<!-- {{ this.$store.state.chartDate }} <br />
 		{{ this.$store.state.visitCount }} <br />
@@ -332,15 +332,33 @@ export default {
 				this.selectMonth = '2021-02-01';
 			}
 		},
-		async excelWrite() {
+
+		async excelAxios() {
 			try {
 				const response = await getExcelData(this.selectMonth);
-				console.log(this.selectMonth);
-				console.log(response);
+				console.log('response', response);
+
+				const url = window.URL.createObjectURL(
+					new Blob([response.data], { type: 'application/vnd.ms-excel' }),
+				);
+				const link = document.createElement('a');
+				link.href = url;
+				const filename = 'report.xls';
+				// const filename = this.replaceAll(
+				// 	decodeURI(response.headers.filename),
+				// 	'+',
+				// 	' ',
+				// );
+				link.setAttribute('download', filename);
+				document.body.appendChild(link);
+				link.click();
 			} catch (error) {
 				console.log(error);
 			}
 		},
+		// replaceAll(str, searchStr, replaceStr) {
+		// 	return str.split(searchStr).join(replaceStr);
+		// },
 	},
 	created() {
 		this.$store.dispatch('fetch_userCount');
@@ -391,7 +409,7 @@ export default {
 				this.$store.dispatch('fetch_visitCount', this.selectMonth);
 				// 일별 차량 방문 수
 				this.$store.dispatch('fetch_visitCarCount', this.selectMonth);
-				this.excelWrite();
+				// this.excelAxios();
 			},
 
 			immediate: true,

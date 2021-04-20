@@ -98,7 +98,7 @@ function userCount() {
 }
 // 엑셀로 출력
 function getExcelData(date) {
-	return axios.request(
+	return axios.get(
 		`http://localhost:8000/api/nlobby/request/${date}/report.xls`,
 		{ responseType: 'blob' },
 	);
